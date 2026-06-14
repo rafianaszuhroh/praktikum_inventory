@@ -2,6 +2,11 @@
 session_start();
 include '../koneksi.php';
 
+//terupdate
+$nama_user = $_SESSION['nama_lengkap'];
+$username  = $_SESSION['username'];
+$role      = ucfirst($_SESSION['role']);
+
 // 1. Ambil data untuk opsi dropdown filter
 $query_status      = mysqli_query($koneksi, "SELECT * FROM status_barang");
 $query_penyimpanan = mysqli_query($koneksi, "SELECT * FROM penyimpanan");
@@ -44,6 +49,29 @@ $query_string = "SELECT barang.*,
                  LEFT JOIN vendor ON barang.vendor_id = vendor.id_vendor" . $where_sql;
 
 $data = mysqli_query($koneksi, $query_string);
+// Baru
+$query_barang = mysqli_query($koneksi, "SELECT COUNT(*) AS total_barang FROM barang");
+$data_barang  = mysqli_fetch_assoc($query_barang);
+$total_barang = $data_barang['total_barang'];
+
+// 2. Hitung Persentase Barang yang Butuh Restok (Pengganti Bounce Rate)
+// Mencari barang yang stoknya sudah menyentuh atau di bawah limit_stok
+$query_kritis = mysqli_query($koneksi, "SELECT COUNT(*) AS total_kritis FROM barang WHERE stok <= limit_stok");
+$data_kritis  = mysqli_fetch_assoc($query_kritis);
+$total_kritis = $data_kritis['total_kritis'];
+
+// Rumus presentase agar aman dari pembagian dengan angka 0 (division by zero)
+$bounce_rate_persen = $total_barang > 0 ? round(($total_kritis / $total_barang) * 100) : 0;
+
+// 3. Hitung Total User Registrations
+$query_users = mysqli_query($koneksi, "SELECT COUNT(*) AS total_users FROM users");
+$data_users  = mysqli_fetch_assoc($query_users);
+$total_users = $data_users['total_users'];
+
+// 4. Hitung Total Distribusi Barang (Pengganti Unique Visitors)
+$query_distribusi = mysqli_query($koneksi, "SELECT COUNT(*) AS total_distribusi FROM distribusi");
+$data_distribusi  = mysqli_fetch_assoc($query_distribusi);
+$total_distribusi = $data_distribusi['total_distribusi'];
 ?>
    <!doctype html>
    <html lang="en">
@@ -145,9 +173,9 @@ $data = mysqli_query($koneksi, $query_string);
                        <!--begin::User Menu Dropdown-->
                        <li class="nav-item dropdown user-menu">
                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                               <img src="./assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow"
+                               <img src="../assets/img/gambar2.jpeg" class="user-image rounded-circle shadow"
                                    alt="User Image" />
-                               <span class="d-none d-md-inline">wawan</span>
+                               <span class="d-none d-md-inline">Rafianas Zuhroh</span>
                            </a>
                            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                                <!--begin::User Image-->
@@ -155,7 +183,7 @@ $data = mysqli_query($koneksi, $query_string);
                                    <img src="./assets/img/user2-160x160.jpg" class="rounded-circle shadow"
                                        alt="User Image" />
                                    <p>
-                                       wawan - Admin
+                                       Rafianas Zuhroh - Admin
                                        <small>Member since Agustus 2025</small>
                                    </p>
                                </li>
@@ -299,97 +327,102 @@ $data = mysqli_query($koneksi, $query_string);
                    <div class="container-fluid">
                        <!--begin::Row-->
                        <div class="row">
-                           <!--begin::Col-->
-                           <div class="col-lg-3 col-6">
-                               <!--begin::Small Box Widget 1-->
-                               <div class="small-box text-bg-primary">
-                                   <div class="inner">
-                                       <h3>150</h3>
+                        <div class="col-lg-3 col-6">
+                            <!--begin::Small Box Widget 1-->
+                            <div class="small-box text-bg-primary">
+                                
+                                
+                            </div>
+                            <!--end::Small Box Widget 1-->
+                        </div>
+                        <!--end::Col-->
+                        <div class="app-content">
+                            <div class="container-fluid">
+                                <div class="row">
 
-                                       <p>New Orders</p>
-                                   </div>
-                                   <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
-                                       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                       <path
-                                           d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z">
-                                       </path>
-                                   </svg>
-                                   <a href="#"
-                                       class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                                       More info <i class="bi bi-link-45deg"></i>
-                                   </a>
-                               </div>
-                               <!--end::Small Box Widget 1-->
-                           </div>
-                           <!--end::Col-->
-                           <div class="col-lg-3 col-6">
-                               <!--begin::Small Box Widget 2-->
-                               <div class="small-box text-bg-success">
-                                   <div class="inner">
-                                       <h3>53<sup class="fs-5">%</sup></h3>
+                                    <div class="col-lg-3 col-6">
+                                        <div class="small-box text-bg-primary">
+                                            <div class="inner">
+                                                <h3><?php echo $total_barang; ?></h3>
+                                                <p>Total Produk</p>
+                                            </div>
+                                            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                <path
+                                                    d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z">
+                                                </path>
+                                            </svg>
+                                            <a href="barang.php"
+                                                class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                                                Lihat Produk <i class="bi bi-link-45deg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
 
-                                       <p>Bounce Rate</p>
-                                   </div>
-                                   <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
-                                       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                       <path
-                                           d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z">
-                                       </path>
-                                   </svg>
-                                   <a href="#"
-                                       class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                                       More info <i class="bi bi-link-45deg"></i>
-                                   </a>
-                               </div>
-                               <!--end::Small Box Widget 2-->
-                           </div>
-                           <!--end::Col-->
-                           <div class="col-lg-3 col-6">
-                               <!--begin::Small Box Widget 3-->
-                               <div class="small-box text-bg-warning">
-                                   <div class="inner">
-                                       <h3>44</h3>
+                                    <div class="col-lg-3 col-6">
+                                        <div class="small-box text-bg-success">
+                                            <div class="inner">
+                                                <h3><?php echo $bounce_rate_persen; ?><sup class="fs-5">%</sup></h3>
+                                                <p>Stok Perlu Restok</p>
+                                            </div>
+                                            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                <path
+                                                    d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z">
+                                                </path>
+                                            </svg>
+                                            <a href="restok.php"
+                                                class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                                                Cek Limit Stok <i class="bi bi-link-45deg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
 
-                                       <p>User Registrations</p>
-                                   </div>
-                                   <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
-                                       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                       <path
-                                           d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
-                                       </path>
-                                   </svg>
-                                   <a href="#"
-                                       class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover">
-                                       More info <i class="bi bi-link-45deg"></i>
-                                   </a>
-                               </div>
-                               <!--end::Small Box Widget 3-->
-                           </div>
-                           <!--end::Col-->
-                           <div class="col-lg-3 col-6">
-                               <!--begin::Small Box Widget 4-->
-                               <div class="small-box text-bg-danger">
-                                   <div class="inner">
-                                       <h3>65</h3>
+                                    <div class="col-lg-3 col-6">
+                                        <div class="small-box text-bg-warning">
+                                            <div class="inner">
+                                                <h3><?php echo $total_users; ?></h3>
+                                                <p>User Terdaftar</p>
+                                            </div>
+                                            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                <path
+                                                    d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
+                                                </path>
+                                            </svg>
+                                            <a href="users.php"
+                                                class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover">
+                                                Kelola User <i class="bi bi-link-45deg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
 
-                                       <p>Unique Visitors</p>
-                                   </div>
-                                   <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
-                                       xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                       <path clip-rule="evenodd" fill-rule="evenodd"
-                                           d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z">
-                                       </path>
-                                       <path clip-rule="evenodd" fill-rule="evenodd"
-                                           d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z">
-                                       </path>
-                                   </svg>
-                                   <a href="#"
-                                       class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                                       More info <i class="bi bi-link-45deg"></i>
-                                   </a>
-                               </div>
-                               <!--end::Small Box Widget 4-->
-                           </div>
+                                    <div class="col-lg-3 col-6">
+                                        <div class="small-box text-bg-danger">
+                                            <div class="inner">
+                                                <h3><?php echo $total_distribusi; ?></h3>
+                                                <p>Log Distribusi</p>
+                                            </div>
+                                            <svg class="small-box-icon" fill="currentColor" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                <path clip-rule="evenodd" fill-rule="evenodd"
+                                                    d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z">
+                                                </path>
+                                                <path clip-rule="evenodd" fill-rule="evenodd"
+                                                    d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z">
+                                                </path>
+                                            </svg>
+                                            <a href="distribusi.php"
+                                                class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                                                Lihat Riwayat <i class="bi bi-link-45deg"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Col-->
                            <!--end::Col-->
 
                            <!-- /.contacts-list-info -->
