@@ -23,7 +23,7 @@ if (isset($_POST['update'])) {
         UPDATE barang SET
         nama_barang='$nama',
         status_barang='$status_barang',
-        penyimpanan_barang='$penyimpanan_barang',
+        penyimpanan_id='$penyimpanan_barang',
         harga_barang='$harga'
         WHERE id='$id'
     ");

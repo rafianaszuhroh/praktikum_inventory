@@ -24,7 +24,7 @@ if (!empty($search)) {
     $where_clauses[] = "barang.nama_barang LIKE '%$search%'";
 }
 if (!empty($filter_status)) {
-    $where_clauses[] = "barang.status_id = '$filter_status'";
+    $where_clauses[] = "barang.status_barang = '$filter_status'";
 }
 if (!empty($filter_penyimpanan)) {
     $where_clauses[] = "barang.penyimpanan_id = '$filter_penyimpanan'";
@@ -40,15 +40,14 @@ if (count($where_clauses) > 0) {
 
 // 4. Query utama dengan penyesuaian kolom vendor.id_vendor dan barang.vendor_id
 $query_string = "SELECT barang.*, 
-                        status_barang.nama_status, 
-                        penyimpanan.nama_penyimpanan, 
-                        vendor.nama_vendor 
+                        barang.id AS id_barang,
+                        barang.status_id,
+                        barang.penyimpanan_id,
+                        vendor.nama_vendor
                  FROM barang 
-                 LEFT JOIN status_barang ON barang.status_id = status_barang.id
-                 LEFT JOIN penyimpanan ON barang.penyimpanan_id = penyimpanan.id
                  LEFT JOIN vendor ON barang.vendor_id = vendor.id_vendor" . $where_sql;
-
 $data = mysqli_query($koneksi, $query_string);
+
 // Baru
 $query_barang = mysqli_query($koneksi, "SELECT COUNT(*) AS total_barang FROM barang");
 $data_barang  = mysqli_fetch_assoc($query_barang);
@@ -79,7 +78,7 @@ $total_distribusi = $data_distribusi['total_distribusi'];
 
    <head>
        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-       <title>AdminLTE v4 | Dashboard</title>
+       <title>WARTEG ARANUI BAHARI | Dashboard</title>
 
        <!--begin::Accessibility Meta Tags-->
        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
@@ -180,7 +179,7 @@ $total_distribusi = $data_distribusi['total_distribusi'];
                            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                                <!--begin::User Image-->
                                <li class="user-header text-bg-primary">
-                                   <img src="./assets/img/user2-160x160.jpg" class="rounded-circle shadow"
+                                   <img src="../assets/img/gambar2.jpeg" class="rounded-circle shadow"
                                        alt="User Image" />
                                    <p>
                                        Rafianas Zuhroh - Admin
@@ -227,11 +226,11 @@ $total_distribusi = $data_distribusi['total_distribusi'];
                    <!--begin::Brand Link-->
                    <a href="./index.html" class="brand-link">
                        <!--begin::Brand Image-->
-                       <img src="./assets/img/AdminLTELogo.png" alt="AdminLTE Logo"
+                       <img src="../assets/img/gambar1.png" alt="AdminLTE Logo"
                            class="brand-image opacity-75 shadow" />
                        <!--end::Brand Image-->
                        <!--begin::Brand Text-->
-                       <span class="brand-text fw-light">AdminLTE 4</span>
+                       <span class="brand-text fw-light">InWarteg Bahari</span>
                        <!--end::Brand Text-->
                    </a>
                    <!--end::Brand Link-->
@@ -279,7 +278,7 @@ $total_distribusi = $data_distribusi['total_distribusi'];
                                    <li class="nav-item">
                                        <a href="vendor.php" class="nav-link">
                                            <i class="nav-icon bi bi-circle"></i>
-                                           <p>Vendor</p>
+                                           <p>Supplier</p>
                                        </a>
                                    </li>
                                    
@@ -457,7 +456,7 @@ $total_distribusi = $data_distribusi['total_distribusi'];
             </div>
             <div class="col-md-3">
                 <select name="vendor_id" class="form-control">
-                    <option value="">-- Semua Vendor --</option>
+                    <option value="">-- Semua Supplier --</option>
                     <?php while($vd = mysqli_fetch_assoc($query_vendor)) { ?>
                         <option value="<?= $vd['id_vendor']; ?>" <?= $filter_vendor == $vd['id_vendor'] ? 'selected' : ''; ?>>
                             <?= $vd['nama_vendor']; ?>
@@ -476,15 +475,13 @@ $total_distribusi = $data_distribusi['total_distribusi'];
                 <tr>
                     <th>No</th>
                     <th>Nama Barang</th>
-                    <th>Vendor</th>
+                    <th>Supplier</th>
                     <th>Status</th>
                     <th>Penyimpanan</th>
                     <th>Harga</th>
                     <th>Stok</th>
-                    <th>Limit Stok</th>
-                    <?php if ($_SESSION['role'] == 'admin') { ?>
-                        <th>Aksi</th>
-                    <?php } ?>
+ <th>Limit Stok</th>
+<th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -500,11 +497,11 @@ $total_distribusi = $data_distribusi['total_distribusi'];
                         <td><?= htmlspecialchars($row['nama_vendor'] ?? 'Belum Set'); ?></td>
                         <td>
                             <!-- Antisipasi data lama seperti 'aktif' agar tidak merusak tampilan text layout -->
-                            <?= htmlspecialchars($row['nama_status'] ?? $row['status_id']); ?>
+                            <?= htmlspecialchars( $row['status_id'] ?? '-'); ?>
                         </td>
                         <td>
                             <!-- Antisipasi data lama seperti 'gudang A' agar aman dari blank data -->
-                            <?= htmlspecialchars($row['nama_penyimpanan'] ?? $row['penyimpanan_id']); ?>
+                            <?= htmlspecialchars($row['penyimpanan_id'] ?? '-'); ?>
                         </td>
                         <td>Rp <?= number_format($row['harga_barang'], 0, ',', '.'); ?></td>
                         <td>
@@ -514,20 +511,13 @@ $total_distribusi = $data_distribusi['total_distribusi'];
                                 <span class="badge bg-success"><?= $row['stok']; ?></span>
                             <?php } ?>
                         </td>
-                        <td><span class="text-muted"><?= $row['limit_stok']; ?></span></td>
-
-                        <?php if ($_SESSION['role'] == 'admin') { ?>
-                            <td>
-                                <div class="d-flex gap-1">
-                                    <a href="edit_barang.php?id=<?= $row['id']; ?>" class="btn btn-warning btn-sm">
-                                        Edit
-                                    </a>
-                                    <a href="hapus_barang.php?id=<?= $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data?')">
-                                        Hapus
-                                    </a>
-                                </div>
-                            </td>
-                        <?php } ?>
+  <td><span class="text-muted"><?= $row['limit_stok']; ?></span></td>
+<td>
+    <div class="d-flex gap-1">
+        <a href="edit_barang.php?id=<?= $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+        <a href="hapus_barang.php?id=<?= $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data?')">Hapus</a>
+    </div>
+</td>
                     </tr>
                 <?php } ?>
             </tbody>
