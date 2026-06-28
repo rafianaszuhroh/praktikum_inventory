@@ -1,4 +1,5 @@
 #WARTEG ARANUI BAHARI INVENTORY#
+
 <img width="960" height="600" alt="Image" src="https://github.com/user-attachments/assets/378ecfa2-07d8-4f72-a675-6ce526938a56" />
 <img width="960" height="600" alt="Image" src="https://github.com/user-attachments/assets/a80dac40-c157-4338-993f-e0baa4ae965c" />
 <img width="216" height="220" alt="Image" src="https://github.com/user-attachments/assets/ffcd195d-cb0f-47cc-8378-304128184123" />
