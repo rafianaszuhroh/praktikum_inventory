@@ -1,12 +1,13 @@
-#WARTEG ARANUI BAHARI INVENTORY#
-PROFIL SINGKAT
+                                  #WARTEG ARANUI BAHARI INVENTORY#
+
+                                        #PROFIL SINGKAT#
 
 Warteg Aranu Bahari adalah usaha yang bergerak di bidang kuliner dengan menyediakan berbagai menu makanan rumahan yang berkualitas, higienis, dan terjangkau. Warteg ini hadir untuk memenuhi kebutuhan masyarakat akan makanan sehari-hari dengan cita rasa khas, pelayanan cepat, serta suasana yang nyaman.Didirikan dengan komitmen memberikan pengalaman makan yang memuaskan, Warteg Aranu Bahari menyediakan beragam pilihan lauk dan menu yang selalu dijaga kualitas bahan baku serta proses pengolahannya. Selain melayani makan di tempat, usaha juga dapat melayani pesanan dalam jumlah tertentu sesuai kebutuhan pelanggan.
 
-VISI
+                                                                #VISI#
 “Menjadi warteg terpercaya dan pilihan utama masyarakat dalam menyediakan makanan berkualitas, lezat, dan terjangkau.”
 
-MISI
+                                                                  #MISI#
 1.	Menyediakan makanan yang higienis, berkualitas, dan memiliki cita rasa yang konsisten. 
 2.	Memberikan pelayanan yang cepat, ramah, dan memuaskan kepada pelanggan. 
 3.	Menjaga kualitas bahan baku serta proses pengolahan makanan yang aman dan sehat. 
